@@ -30,17 +30,10 @@ class SWRequester(APIRequester):
 
     def get_sw_categories(self):
         """Функция возвращает список категорий."""
-        try:
-            response = requests.get(f'{self.base_url}/')
-            response.raise_for_status()
-        except requests.HTTPError:
-            print('Возникла ошибка при выполнении запроса')
-        except requests.exceptions.RequestException:
-            print('Возникла ошибка при выполнении запроса')
-        else:
-            json_response = response.json()
-            categories = json_response.keys()
-            return categories
+        response = self.get('/')
+        json_response = response.json()
+        categories = json_response.keys()
+        return categories
 
     def get_sw_info(self, sw_type):
         """
@@ -65,7 +58,8 @@ def save_sw_data():
     if isinstance(categories, str):
         print(categories)
     else:
-        Path('data').mkdir(exist_ok=True)
+        catalog = 'data'
+        Path(catalog).mkdir(exist_ok=True)
         for category in categories:
-            with open(f'data/{category}.txt', 'w') as file:
+            with open(f'{catalog}/{category}.txt', 'w') as file:
                 file.write(requester.get_sw_info(category))
